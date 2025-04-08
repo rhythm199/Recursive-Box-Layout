@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Recursive Box Layout</title>
+    <style>
+        .boxLayout {
+            width: 350px;
+            min-height: 200px;
+            padding: 20px;
+            margin: 50px auto;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 80%;
+            padding: 8px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: fit-content;
+            padding-left: 50px;
+        }
+
+        .row {
+            display: flex;
+            border-top: 1px solid black;
+        }
+
+        .row:last-child {
+            border-bottom: 1px solid black;
+        }
+
+        .box {
+            height: 50px;
+            box-sizing: border-box;
+            border-left: 1px solid black;
+        }
+
+        .box:last-child {
+            border-right: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="boxLayout">
+        <h3>
+            Recursive Box Layout
+        </h3>
+        <input type="number" id="inputN" min="1" oninput="handleInput(this.value)" placeholder="Enter n" />
+        <div class="container" id="boxContainer"></div>
+    </div>
+
+    <script>
+        // iterative Approach
+        /*    function createBoxLayout(n) {
+              const container = document.getElementById("boxContainer");
+             
+              for (let i = 0; i < n; i++) {
+                const row = document.createElement("div");
+                row.className = `row row${i + 1}`;
+             
+                const boxCount = n - i;
+                const boxWidth = 250 / boxCount;
+             
+                for (let j = 0; j < boxCount; j++) {
+                  const box = document.createElement("div");
+                  box.className = "box";
+                  box.style.width = `${boxWidth}px`;
+                  row.appendChild(box);
+                }
+             
+                container.appendChild(row);
+              }
+            } */
+
+
+        // Recursive Approach
+        function createBoxRow(boxCount, rowElement, boxWidth) {
+            if (boxCount === 0) return;
+
+            const box = document.createElement("div");
+            box.className = "box";
+            box.style.width = `${boxWidth}px`;
+            rowElement.appendChild(box);
+
+            createBoxRow(boxCount - 1, rowElement, boxWidth);
+        }
+
+        function createRows(n, current = 0, container = document.getElementById("boxContainer")) {
+            if (current === n) return;
+
+            const row = document.createElement("div");
+            row.className = `row row${current + 1}`;
+
+            const boxCount = n - current;
+            const boxWidth = 250 / boxCount;
+
+            createBoxRow(boxCount, row, boxWidth);
+            container.appendChild(row);
+
+            createRows(n, current + 1, container);
+        }
+
+        function handleInput(value) {
+            const n = parseInt(value);
+            const container = document.getElementById("boxContainer");
+            container.innerHTML = ''; // Clear previous output
+            if (!isNaN(n) && n > 0) {
+                createRows(n, 0, container);
+            }
+            if (n <= 0) {
+                const msg = document.createElement("div");
+                msg.style.color = "red";
+                msg.textContent = "Please insert number greater than 0";
+                container.appendChild(msg);
+                return;
+            }
+        };
+    </script>
+</body>
+
+</html>
